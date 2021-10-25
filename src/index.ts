@@ -1,7 +1,6 @@
-import JSBI from 'jsbi'
+import { BigNumber } from 'ethers'
 
-// Export JSBI
-export { JSBI }
+export { BigNumber }
 
 export * from './constants'
 export * from './errors'
@@ -11,5 +10,3 @@ export * from './router'
 export * from './enums'
 export * from './router'
 export * from './types'
-export * from './utils/MultiRouterMath'
-export * from './limitorder'

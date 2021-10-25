@@ -2,9 +2,9 @@ import { BigintIsh } from '../types'
 import { Currency } from './Currency'
 import { CurrencyAmount } from './CurrencyAmount'
 import { Fraction } from './Fraction'
-import JSBI from 'jsbi'
 import { Rounding } from '../enums'
 import invariant from 'tiny-invariant'
+import { Ten } from '../constants'
 
 export class Price<TBase extends Currency, TQuote extends Currency> extends Fraction {
   public readonly baseCurrency: TBase // input i.e. denominator
@@ -35,17 +35,14 @@ export class Price<TBase extends Currency, TQuote extends Currency> extends Frac
         args[0].baseAmount.currency,
         args[0].quoteAmount.currency,
         result.denominator,
-        result.numerator
+        result.numerator,
       ]
     }
     super(numerator, denominator)
 
     this.baseCurrency = baseCurrency
     this.quoteCurrency = quoteCurrency
-    this.scalar = new Fraction(
-      JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(baseCurrency.decimals)),
-      JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(quoteCurrency.decimals))
-    )
+    this.scalar = new Fraction(Ten.pow(baseCurrency.decimals), Ten.pow(quoteCurrency.decimals))
   }
 
   /**

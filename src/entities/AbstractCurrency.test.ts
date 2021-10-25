@@ -4,11 +4,11 @@ import { Currency } from '../entities/Currency'
 import { ChainId } from '../enums'
 
 describe('AbstractCurrency', () => {
-  const ADDRESS_ONE = '0x0000000000000000000000000000000000000001'
+  const ADDRESS_ONE = 'cfx:acaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaae54pwdts6'
 
   describe('#serialize', () => {
     it('renders string of address for Token', () => {
-      const token = new Token(1, ADDRESS_ONE, 3)
+      const token = new Token(ChainId.TETHYS, ADDRESS_ONE, 3)
       expect(token.serialize()).toEqual(ADDRESS_ONE)
     })
 
@@ -21,10 +21,10 @@ describe('AbstractCurrency', () => {
           return other.isNative && other.chainId === this.chainId
         }
         get wrapped(): Token {
-          return new Token(ChainId.MAINNET, ADDRESS_ONE, 18)
+          return new Token(ChainId.TETHYS, ADDRESS_ONE, 18)
         }
       }
-      expect(new MoonBeam(ChainId.MAINNET).serialize()).toEqual(ADDRESS_ONE)
+      expect(new MoonBeam(ChainId.TETHYS).serialize()).toEqual(ADDRESS_ONE)
     })
   })
 })

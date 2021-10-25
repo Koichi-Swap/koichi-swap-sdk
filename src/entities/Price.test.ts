@@ -1,14 +1,15 @@
+import { ChainId } from '../enums/ChainId'
 import { Token } from './Token'
 import { CurrencyAmount } from './CurrencyAmount'
 import { Price } from './Price'
 
 describe('Price', () => {
-  const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
-  const ADDRESS_ONE = '0x0000000000000000000000000000000000000001'
+  const ADDRESS_ZERO = 'cfx:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0sfbnjm2'
+  const ADDRESS_ONE = 'cfx:acaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaae54pwdts6'
 
-  const t0 = new Token(1, ADDRESS_ZERO, 18)
-  const t0_6 = new Token(1, ADDRESS_ZERO, 6)
-  const t1 = new Token(1, ADDRESS_ONE, 18)
+  const t0 = new Token(ChainId.TETHYS, ADDRESS_ZERO, 18)
+  const t0_6 = new Token(ChainId.TETHYS, ADDRESS_ZERO, 6)
+  const t1 = new Token(ChainId.TETHYS, ADDRESS_ONE, 18)
 
   describe('#constructor', () => {
     it('array format works', () => {
@@ -20,7 +21,7 @@ describe('Price', () => {
     it('object format works', () => {
       const price = new Price({
         baseAmount: CurrencyAmount.fromRawAmount(t0, 1),
-        quoteAmount: CurrencyAmount.fromRawAmount(t1, 54321)
+        quoteAmount: CurrencyAmount.fromRawAmount(t1, 54321),
       })
       expect(price.toSignificant(5)).toEqual('54321')
       expect(price.baseCurrency.equals(t0))

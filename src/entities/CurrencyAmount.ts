@@ -1,13 +1,13 @@
 import { BigintIsh } from '../types'
 import { Currency } from './Currency'
 import { Fraction } from './Fraction'
-import JSBI from 'jsbi'
-import { MaxUint256 } from '../constants'
+import { MaxUint256, Ten } from '../constants'
 import { Rounding } from '../enums'
 import { Token } from './Token'
 import _Big from 'big.js'
 import invariant from 'tiny-invariant'
 import toFormat from 'toformat'
+import { BigNumber } from 'ethers'
 
 const Big = toFormat(_Big)
 
@@ -15,7 +15,7 @@ Big.strict = true
 
 export class CurrencyAmount<T extends Currency> extends Fraction {
   public readonly currency: T
-  public readonly decimalScale: JSBI
+  public readonly decimalScale: BigNumber
 
   /**
    * Returns a new currency amount instance from the unitless amount of token, i.e. the raw amount
@@ -42,9 +42,9 @@ export class CurrencyAmount<T extends Currency> extends Fraction {
 
   protected constructor(currency: T, numerator: BigintIsh, denominator?: BigintIsh) {
     super(numerator, denominator)
-    invariant(JSBI.lessThanOrEqual(this.quotient, MaxUint256), 'AMOUNT')
+    invariant(this.quotient.lte(MaxUint256), 'AMOUNT')
     this.currency = currency
-    this.decimalScale = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(currency.decimals))
+    this.decimalScale = Ten.pow(currency.decimals)
   }
 
   public add(other: CurrencyAmount<T>): CurrencyAmount<T> {

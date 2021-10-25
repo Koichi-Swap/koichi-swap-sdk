@@ -1,9 +1,9 @@
-import { SOLIDITY_TYPE_MAXIMA, SolidityType, ZERO } from '../constants'
+import { SOLIDITY_TYPE_MAXIMA, SolidityType, Zero } from '../constants'
 
-import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
+import { BigNumber } from 'ethers'
 
-export function validateSolidityTypeInstance(value: JSBI, solidityType: SolidityType): void {
-  invariant(JSBI.greaterThanOrEqual(value, ZERO), `${value} is not a ${solidityType}.`)
-  invariant(JSBI.lessThanOrEqual(value, SOLIDITY_TYPE_MAXIMA[solidityType]), `${value} is not a ${solidityType}.`)
+export function validateSolidityTypeInstance(value: BigNumber, solidityType: SolidityType): void {
+  invariant(value.gte(Zero), `${value} is not a ${solidityType}.`)
+  invariant(value.lte(SOLIDITY_TYPE_MAXIMA[solidityType]), `${value} is not a ${solidityType}.`)
 }

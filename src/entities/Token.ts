@@ -3,6 +3,7 @@ import { ChainId } from '../enums'
 import { Currency } from './Currency'
 import invariant from 'tiny-invariant'
 import { validateAndParseAddress } from '../functions/validateAndParseAddress'
+import { format } from 'js-conflux-sdk'
 
 /**
  * Represents an ERC20 token with a unique address and some metadata.
@@ -17,7 +18,7 @@ export class Token extends AbstractCurrency {
   public constructor(chainId: ChainId, address: string, decimals: number, symbol?: string, name?: string) {
     super(chainId, decimals, symbol, name)
     this.chainId = chainId
-    this.address = validateAndParseAddress(address)
+    this.address = validateAndParseAddress(address, chainId)
   }
 
   /**
@@ -37,7 +38,7 @@ export class Token extends AbstractCurrency {
   public sortsBefore(other: Token): boolean {
     invariant(this.chainId === other.chainId, 'CHAIN_IDS')
     invariant(this.address !== other.address, 'ADDRESSES')
-    return this.address.toLowerCase() < other.address.toLowerCase()
+    return format.hexAddress(this.address).toLowerCase() < format.hexAddress(other.address).toLowerCase()
   }
 
   /**

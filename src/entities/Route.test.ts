@@ -1,15 +1,17 @@
-import { CurrencyAmount, Ether, Pair, Route, Token } from './index'
+import { CurrencyAmount, Conflux, Pair, Route, Token } from './index'
 
-import { WETH9 } from '../constants'
+import { WCFX } from '../constants'
+import { ChainId } from '../enums'
 
 describe('Route', () => {
-  const ETHER = Ether.onChain(1)
-  const token0 = new Token(1, '0x0000000000000000000000000000000000000001', 18, 't0')
-  const token1 = new Token(1, '0x0000000000000000000000000000000000000002', 18, 't1')
-  const weth = WETH9[1]
-  const pair_0_1 = new Pair(CurrencyAmount.fromRawAmount(token0, '100'), CurrencyAmount.fromRawAmount(token1, '200'))
-  const pair_0_weth = new Pair(CurrencyAmount.fromRawAmount(token0, '100'), CurrencyAmount.fromRawAmount(weth, '100'))
-  const pair_1_weth = new Pair(CurrencyAmount.fromRawAmount(token1, '175'), CurrencyAmount.fromRawAmount(weth, '100'))
+  const CONFLUX = Conflux.onChain(ChainId.TETHYS)
+  const token0 = new Token(ChainId.TETHYS, 'cfx:acaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaae54pwdts6', 18, 't0')
+  const token1 = new Token(ChainId.TETHYS, 'cfx:acaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaajuse7n5fu', 18, 't1')
+  const lpToken = new Token(ChainId.TETHYS, 'cfx:acaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaapsc52y15y', 18, 'lp')
+  const wcfx = WCFX[ChainId.TETHYS]
+  const pair_0_1 = new Pair(lpToken, CurrencyAmount.fromRawAmount(token0, '100'), CurrencyAmount.fromRawAmount(token1, '200'))
+  const pair_0_wcfx = new Pair(lpToken, CurrencyAmount.fromRawAmount(token0, '100'), CurrencyAmount.fromRawAmount(wcfx, '100'))
+  const pair_1_wcfx = new Pair(lpToken, CurrencyAmount.fromRawAmount(token1, '175'), CurrencyAmount.fromRawAmount(wcfx, '100'))
 
   it('constructs a path from the tokens', () => {
     const route = new Route([pair_0_1], token0, token1)
@@ -17,27 +19,27 @@ describe('Route', () => {
     expect(route.path).toEqual([token0, token1])
     expect(route.input).toEqual(token0)
     expect(route.output).toEqual(token1)
-    expect(route.chainId).toEqual(1)
+    expect(route.chainId).toEqual(ChainId.TETHYS)
   })
 
   it('can have a token as both input and output', () => {
-    const route = new Route([pair_0_weth, pair_0_1, pair_1_weth], weth, weth)
-    expect(route.pairs).toEqual([pair_0_weth, pair_0_1, pair_1_weth])
-    expect(route.input).toEqual(weth)
-    expect(route.output).toEqual(weth)
+    const route = new Route([pair_0_wcfx, pair_0_1, pair_1_wcfx], wcfx, wcfx)
+    expect(route.pairs).toEqual([pair_0_wcfx, pair_0_1, pair_1_wcfx])
+    expect(route.input).toEqual(wcfx)
+    expect(route.output).toEqual(wcfx)
   })
 
-  it('supports ether input', () => {
-    const route = new Route([pair_0_weth], ETHER, token0)
-    expect(route.pairs).toEqual([pair_0_weth])
-    expect(route.input).toEqual(ETHER)
+  it('supports CONFLUX input', () => {
+    const route = new Route([pair_0_wcfx], CONFLUX, token0)
+    expect(route.pairs).toEqual([pair_0_wcfx])
+    expect(route.input).toEqual(CONFLUX)
     expect(route.output).toEqual(token0)
   })
 
-  it('supports ether output', () => {
-    const route = new Route([pair_0_weth], token0, ETHER)
-    expect(route.pairs).toEqual([pair_0_weth])
+  it('supports CONFLUX output', () => {
+    const route = new Route([pair_0_wcfx], token0, CONFLUX)
+    expect(route.pairs).toEqual([pair_0_wcfx])
     expect(route.input).toEqual(token0)
-    expect(route.output).toEqual(ETHER)
+    expect(route.output).toEqual(CONFLUX)
   })
 })

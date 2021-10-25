@@ -6,6 +6,7 @@ import { Trade } from './entities/Trade'
 import { TradeType } from './enums/TradeType'
 import invariant from 'tiny-invariant'
 import { validateAndParseAddress } from './functions/validateAndParseAddress'
+import { ChainId } from './enums'
 
 /**
  * Options for producing the arguments to send call to the router.
@@ -59,7 +60,7 @@ export interface SwapParameters {
 }
 
 export function toHex(currencyAmount: CurrencyAmount<Currency>) {
-  return `0x${currencyAmount.quotient.toString(16)}`
+  return currencyAmount.quotient.toHexString()
 }
 
 const ZERO_HEX = '0x0'
@@ -79,7 +80,8 @@ export abstract class Router {
    */
   public static swapCallParameters(
     trade: Trade<Currency, Currency, TradeType>,
-    options: TradeOptions | TradeOptionsDeadline
+    options: TradeOptions | TradeOptionsDeadline,
+    chainId: ChainId
   ): SwapParameters {
     const etherIn = trade.inputAmount.currency.isNative
     const etherOut = trade.outputAmount.currency.isNative
@@ -87,7 +89,7 @@ export abstract class Router {
     invariant(!(etherIn && etherOut), 'ETHER_IN_OUT')
     invariant(!('ttl' in options) || options.ttl > 0, 'TTL')
 
-    const to: string = validateAndParseAddress(options.recipient)
+    const to: string = validateAndParseAddress(options.recipient, chainId)
     const amountIn: string = toHex(trade.maximumAmountIn(options.allowedSlippage))
     const amountOut: string = toHex(trade.minimumAmountOut(options.allowedSlippage))
     const path: string[] = trade.route.path.map((token: Token) => token.address)
